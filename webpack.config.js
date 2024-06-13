@@ -12,7 +12,11 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config()
 
-export default {
+export default (env, argv) => {
+  const isProduction = argv.mode === 'production';
+
+  return {
+    
   // 打包模式 development or production (會再更精簡)
   mode: 'development',
   // 入口檔案
@@ -20,7 +24,7 @@ export default {
   // 指定打包位置以及檔名
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].[hash].bundle.js',
+    filename: isProduction ? '[name].[contenthash].bundle.js' : '[name].[hash].bundle.js',
     clean: true
   },
   // 建立伺服器
@@ -73,9 +77,10 @@ export default {
     }),
     // 生成css檔案
     new MiniCssExtractPlugin({
-      filename: '[hash].css'
+      filename: isProduction ? '[name].[contenthash].css' : '[hash].css'
     }),
   ]
+  }
 }
 
 // webpack.config.js (Common JS)
